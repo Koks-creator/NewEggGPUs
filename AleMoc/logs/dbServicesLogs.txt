@@ -1,0 +1,191 @@
+2024-04-13 22:11:42,883 - DbServices - INFO - Line: 82 - Adding records from sink
+2024-04-13 22:11:42,883 - DbServices - INFO - Line: 87 - Working on: data_0_13042024_220940631
+2024-04-13 22:11:43,054 - DbServices - INFO - Line: 124 - Done
+2024-04-13 22:17:47,102 - DbServices - INFO - Line: 82 - Adding records from sink
+2024-04-13 22:17:47,102 - DbServices - INFO - Line: 124 - Done
+2024-04-13 22:19:08,886 - DbServices - INFO - Line: 82 - Adding records from sink
+2024-04-13 22:19:08,887 - DbServices - INFO - Line: 124 - Done
+2024-04-13 22:25:06,203 - DbServices - INFO - Line: 82 - Adding records from sink
+2024-04-13 22:25:06,203 - DbServices - INFO - Line: 87 - Working on: data_0_13042024_222301721
+2024-04-13 22:25:06,466 - DbServices - INFO - Line: 124 - Done
+2024-04-13 22:25:19,203 - DbServices - INFO - Line: 82 - Adding records from sink
+2024-04-13 22:25:19,203 - DbServices - INFO - Line: 124 - Done
+2024-04-13 22:31:43,420 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:31:43,420 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:33:40,432 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:33:40,433 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:34:01,223 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:34:01,223 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:34:29,453 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:34:29,453 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:34:45,693 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:34:45,693 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:34:49,904 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:34:49,904 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:36:01,153 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:36:01,153 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:36:34,084 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:36:34,084 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:43:51,793 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:43:51,793 - DbServices - INFO - Line: 88 - Working on: data_0_13042024_223730418
+2024-04-13 22:43:51,849 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:44:02,193 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:44:02,193 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:44:18,803 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:44:18,803 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:44:31,473 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:44:31,473 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:46:29,663 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:46:29,663 - DbServices - INFO - Line: 88 - Working on: data_0_13042024_224607218
+2024-04-13 22:46:29,714 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:46:32,813 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:46:32,813 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:46:42,764 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:46:42,764 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:47:48,818 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:47:48,818 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:48:23,291 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:48:23,291 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:48:32,072 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:48:32,073 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:50:08,982 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:50:08,982 - DbServices - INFO - Line: 125 - Done
+2024-04-13 22:51:23,384 - DbServices - INFO - Line: 83 - Adding records from sink
+2024-04-13 22:51:23,384 - DbServices - INFO - Line: 88 - Working on: data_0_13042024_225058716
+2024-04-13 22:51:23,448 - DbServices - INFO - Line: 125 - Done
+2024-04-14 22:40:02,343 - DbServices - INFO - Line: 93 - Adding records from sink
+2024-04-14 22:40:02,343 - DbServices - INFO - Line: 98 - Working on: data_0_14042024_223025303
+2024-04-14 22:40:02,655 - DbServices - INFO - Line: 137 - Done
+2024-04-14 22:45:34,923 - DbServices - INFO - Line: 92 - Adding records from sink
+2024-04-14 22:45:34,923 - DbServices - INFO - Line: 97 - Working on: data_0_14042024_223025303
+2024-04-14 22:45:34,983 - DbServices - INFO - Line: 142 - Done
+2024-04-14 22:46:07,453 - DbServices - INFO - Line: 92 - Adding records from sink
+2024-04-14 22:46:07,453 - DbServices - INFO - Line: 97 - Working on: data_0_14042024_223025303
+2024-04-14 22:46:07,513 - DbServices - INFO - Line: 141 - counter={'Products': 0, 'Reviews': 0}
+2024-04-14 22:46:07,513 - DbServices - INFO - Line: 142 - Done
+2024-04-14 22:58:32,743 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-14 22:58:32,743 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-14 22:58:32,793 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-14 22:58:32,793 - DbServices - INFO - Line: 146 - Done
+2024-04-14 22:59:37,713 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-14 22:59:37,715 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-14 22:59:37,961 - DbServices - INFO - Line: 145 - counter={'Products': 51, 'Reviews': 0}
+2024-04-14 22:59:37,961 - DbServices - INFO - Line: 146 - Done
+2024-04-14 23:00:09,403 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-14 23:00:09,403 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-14 23:00:09,465 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-14 23:00:09,465 - DbServices - INFO - Line: 146 - Done
+2024-04-14 23:05:45,354 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-14 23:05:45,354 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-14 23:05:45,607 - DbServices - INFO - Line: 145 - counter={'Products': 51, 'Reviews': 0}
+2024-04-14 23:05:45,607 - DbServices - INFO - Line: 146 - Done
+2024-04-14 23:12:22,034 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-14 23:12:22,034 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-14 23:12:22,081 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-14 23:12:22,081 - DbServices - INFO - Line: 146 - Done
+2024-04-14 23:24:23,417 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-14 23:24:23,417 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-14 23:24:23,464 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-14 23:24:23,464 - DbServices - INFO - Line: 146 - Done
+2024-04-14 23:25:08,136 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-14 23:25:08,136 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-14 23:25:08,183 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-14 23:25:08,183 - DbServices - INFO - Line: 146 - Done
+2024-04-14 23:25:39,338 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-14 23:25:39,338 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-14 23:25:39,401 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-14 23:25:39,401 - DbServices - INFO - Line: 146 - Done
+2024-04-15 21:55:38,366 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 21:55:38,366 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 21:55:38,492 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 21:55:38,492 - DbServices - INFO - Line: 146 - Done
+2024-04-15 21:58:16,667 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 21:58:16,667 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 21:58:16,763 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 21:58:16,763 - DbServices - INFO - Line: 146 - Done
+2024-04-15 21:58:22,377 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 21:58:22,385 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 21:58:22,477 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 21:58:22,477 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:00:35,791 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:00:35,791 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:00:35,886 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:00:35,886 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:00:39,833 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:00:39,833 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:00:39,921 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:00:39,921 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:00:46,021 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:00:46,021 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:00:46,121 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:00:46,121 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:01:43,795 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:01:43,795 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:01:43,886 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:01:43,886 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:01:50,893 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:01:50,893 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:01:50,986 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:01:50,986 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:02:02,612 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:02:02,612 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:02:02,716 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 22:02:02,716 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:03:37,111 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:03:37,111 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:03:37,217 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 22:03:37,217 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:03:45,557 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:03:45,557 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:03:45,653 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 22:03:45,653 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:04:20,642 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:04:20,642 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:04:20,742 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 22:04:20,742 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:04:31,732 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:04:31,732 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:04:31,834 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 22:04:31,834 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:04:34,496 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:04:34,496 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:04:34,597 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 22:04:34,597 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:05:48,862 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:05:48,862 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:05:48,962 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 22:05:48,962 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:06:43,725 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:06:43,725 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:06:43,827 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:06:43,827 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:06:58,563 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:06:58,563 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:06:58,655 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:06:58,655 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:07:28,292 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:07:28,292 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:07:28,391 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:07:28,391 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:10:24,089 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:10:24,089 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:10:24,184 - DbServices - INFO - Line: 145 - counter={'Products': 0, 'Reviews': 0}
+2024-04-15 22:10:24,184 - DbServices - INFO - Line: 146 - Done
+2024-04-15 22:10:26,492 - DbServices - INFO - Line: 96 - Adding records from sink
+2024-04-15 22:10:26,492 - DbServices - INFO - Line: 101 - Working on: data_0_14042024_223025303
+2024-04-15 22:10:26,599 - DbServices - INFO - Line: 145 - counter={'Products': 1, 'Reviews': 0}
+2024-04-15 22:10:26,599 - DbServices - INFO - Line: 146 - Done
+2024-04-16 07:49:29,852 - DbServices - INFO - Line: 99 - Adding records from sink
+2024-04-16 07:49:29,853 - DbServices - INFO - Line: 104 - Working on: data_0_14042024_223025303
+2024-04-16 07:49:29,927 - DbServices - INFO - Line: 148 - counter={'Products': 1, 'Reviews': 0}
+2024-04-16 07:49:29,927 - DbServices - INFO - Line: 149 - Done
+2024-04-20 12:40:21,085 - DbServices - INFO - Line: 99 - Adding records from sink
+2024-04-20 12:40:57,260 - DbServices - INFO - Line: 99 - Adding records from sink
+2024-04-20 12:40:57,260 - DbServices - INFO - Line: 104 - Working on: data_0_14042024_223025303
+2024-04-20 12:40:58,031 - DbServices - INFO - Line: 148 - counter={'Products': 51, 'Reviews': 56}
+2024-04-20 12:40:58,031 - DbServices - INFO - Line: 149 - Done
+2024-04-21 12:03:23,439 - DbServices - INFO - Line: 100 - Adding records from sink
+2024-04-21 12:03:23,443 - DbServices - INFO - Line: 105 - Working on: data_0_14042024_223025303
+2024-04-21 12:03:23,507 - DbServices - INFO - Line: 105 - Working on: data_0_21042024_115703629
+2024-04-21 12:03:24,754 - DbServices - INFO - Line: 149 - counter={'Products': 187, 'Reviews': 127}
+2024-04-21 12:03:24,754 - DbServices - INFO - Line: 150 - Done
