@@ -3,10 +3,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 from AleMoc.config import Config
 
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{Config.PROJECT_MAIN_PATH}/database/database.db"
-
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    Config.SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
