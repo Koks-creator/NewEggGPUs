@@ -3,6 +3,8 @@ from pathlib import Path
 
 class Config:
     PROJECT_MAIN_PATH: str = Path(__file__).resolve().parent
+    DATABASE_NAME: str = "database"
+    SQLALCHEMY_DATABASE_URL = f"sqlite:///{PROJECT_MAIN_PATH}/database/{DATABASE_NAME}.db"
     SINK_FOLDER: str = "sink"
     LOGS_FOLDER: str = "logs"
     SCRAPE_ELEMENTS = {
