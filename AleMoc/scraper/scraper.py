@@ -25,8 +25,8 @@ SCRAPE_ELEMENTS = Config.SCRAPE_ELEMENTS
 
 @dataclass
 class NewEggScraper:
-    proxy: Union[str, bool] = "proxy.txt"
-    user_agents: Union[str, bool] = "userAgents.txt"
+    proxy: Union[str, bool] = f"{Config.PROJECT_MAIN_PATH}/scraper/proxy.txt"
+    user_agents: Union[str, bool] = f"{Config.PROJECT_MAIN_PATH}/scraper/userAgents.txt"
     per_page: str = "60"
     log_level: int = logging.DEBUG
     _category_id: str = "100007709"
@@ -63,7 +63,7 @@ class NewEggScraper:
             }
         return None
 
-    def get_urls(self,  phrase: str, max_pages: int = 0, execution_id: int = 0) -> dict:
+    def get_urls(self,  phrase: str, max_pages: int = 0, execution_id: str = "0") -> dict:
 
         link = f"{self._base_url}?SrchInDesc={phrase}&N={self._category_id}&PageSize={self.per_page}"
         self.scraper_logger.info(f"{link=}")
@@ -101,7 +101,7 @@ class NewEggScraper:
 
         return links
 
-    async def scrape(self, session: AsyncHTMLSession, links: list, page_num: str, i: int, execution_id: int) \
+    async def scrape(self, session: AsyncHTMLSession, links: list, page_num: str, i: int, execution_id: str) \
             -> Tuple[List[dict], List[dict]]:
         scraped_products = []
         scraped_reviews = []
@@ -177,7 +177,7 @@ class NewEggScraper:
                 progress_bar.update(1)
         return scraped_products, scraped_reviews
 
-    async def init_tasks(self, links: dict, execution_id: int) -> asyncio.gather:
+    async def init_tasks(self, links: dict, execution_id: str) -> asyncio.gather:
 
         tasks = []
         session = AsyncHTMLSession()
@@ -187,7 +187,7 @@ class NewEggScraper:
 
         return await asyncio.gather(*tasks)
 
-    def run(self, links: dict, execution_id: int) -> Tuple[List, List]:
+    def run(self, links: dict, execution_id: str) -> Tuple[List, List]:
         products = []
         reviews = []
 
@@ -210,22 +210,23 @@ class NewEggScraper:
         return products, reviews
 
     @staticmethod
-    def save2json(filename: str, data: list):
+    def save2json(filename: str, data: list) -> None:
         with open(filename, "w") as json_f:
             json.dump(data, json_f, indent=4)
 
-    def start_scraping(self, phrase: str, max_pages: int = 0, execution_id: int = 0, save: bool = True) -> Tuple[List[dict], List[dict]]:
+    def start_scraping(self, phrase: str, max_pages: int = 0, execution_id: str = "0", save: bool = True) -> Tuple[List[dict], List[dict], str]:
         links = self.get_urls(max_pages=max_pages, phrase=phrase)
         # print(links)
         prods, reviews = self.run(links, execution_id)
 
+        folder = ""
         if save:
             time_now = datetime.now().strftime('%d%m%Y_%H%M%S%f')[:-3]
             folder = rf"{Config.PROJECT_MAIN_PATH}/{Config.SINK_FOLDER}/data_{execution_id}_{time_now}"
             os.mkdir(folder)
             self.save2json(f"{folder}/Products_{execution_id}_{time_now}.json", prods)
             self.save2json(f"{folder}/Reviews_{execution_id}_{time_now}.json", reviews)
-        return prods, reviews
+        return prods, reviews, folder
 
 
 if __name__ == '__main__':
