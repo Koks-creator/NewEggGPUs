@@ -38,12 +38,15 @@ def api_status():
 
 
 @app.post("/runScraper")
-def run_scraper(scraper_config: schemas.ScraperSchema):
+def run_scraper(scraper_config: schemas.ScraperSchema,
+                db: Session = Depends(get_db)):
     execution_id = f"{randint(1, 1000000):06d}"
 
     try:
-        sc.start_scraping(phrase=scraper_config.phrase, max_pages=scraper_config.limit, execution_id=execution_id)
+        prods, reviews, folder = sc.start_scraping(phrase=scraper_config.phrase, max_pages=scraper_config.limit, execution_id=execution_id)
+        folder = folder.split("/")[-1]
         if scraper_config.add_to_db:
+            db_services.add_data_from_sink(db=db, folders_to_process=[folder])
             return {"Msg": "added"}, status.HTTP_201_CREATED
         else:
             return {"Msg": "done"}
@@ -56,9 +59,9 @@ def run_scraper(scraper_config: schemas.ScraperSchema):
 
 @app.post("/queryTable/")
 def query_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                query: schemas.QueryTable,
-                db: Session = Depends(get_db),
-                ):
+                      query: schemas.QueryTable,
+                      db: Session = Depends(get_db),
+                      ):
     if not authentication_check(credentials):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
