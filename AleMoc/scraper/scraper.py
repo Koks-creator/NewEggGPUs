@@ -219,14 +219,16 @@ class NewEggScraper:
         # print(links)
         prods, reviews = self.run(links, execution_id)
 
-        folder = ""
+        full_folder = ""
         if save:
             time_now = datetime.now().strftime('%d%m%Y_%H%M%S%f')[:-3]
-            folder = rf"{Config.PROJECT_MAIN_PATH}/{Config.SINK_FOLDER}/data_{execution_id}_{time_now}"
-            os.mkdir(folder)
-            self.save2json(f"{folder}/Products_{execution_id}_{time_now}.json", prods)
-            self.save2json(f"{folder}/Reviews_{execution_id}_{time_now}.json", reviews)
-        return prods, reviews, folder
+            main_folder = rf"{Config.PROJECT_MAIN_PATH}/{Config.SINK_FOLDER}/"
+            folder_name = f"data_{execution_id}_{time_now}"
+            full_folder = f"{main_folder}{folder_name}"
+            os.mkdir(full_folder)
+            self.save2json(f"{full_folder}/Products_{execution_id}_{time_now}.json", prods)
+            self.save2json(f"{full_folder}/Reviews_{execution_id}_{time_now}.json", reviews)
+        return prods, reviews, full_folder
 
 
 if __name__ == '__main__':
