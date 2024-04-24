@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+from typing import List
 import shutil
 from datetime import datetime
 from sqlalchemy import text
@@ -92,15 +93,16 @@ def add_review(db: database.SessionLocal, new_review: Reviews) -> bool:
     return False
 
 
-def add_data_from_sink(db: database.SessionLocal) -> None:
+def add_data_from_sink(db: database.SessionLocal, folders_to_process: List[str] = None) -> None:
     # counter
     counter = {table_name: 0 for table_name in list(TABLES.keys())}
 
-    # count ile czego dodano i gdzie
     db_services_logger.info("Adding records from sink")
     sink_path = f"{Config.PROJECT_MAIN_PATH}/{Config.SINK_FOLDER}"
 
     data_folders = os.listdir(sink_path)
+    if folders_to_process:
+        data_folders = [folder for folder in data_folders if folder in folders_to_process]
     for data_folder in data_folders:
         db_services_logger.info(f"Working on: {data_folder}")
         data_folder_path = f"{sink_path}/{data_folder}"
@@ -270,17 +272,17 @@ if __name__ == '__main__':
     # #
     # res = delete_from_table(db, "Products", {"ProductId": "TESTUJEM22"}, rollback=True)
     # print(res)
-    # xd = {
-    #     # "WhereQuery": "ProductTitle LIKE '%RTX%3050%'",
-    #     # "WhereQuery": "Archived is false limit 10",
-    #     "WhereQuery": "ProductId = 'N82E16814126588T'",
-    #     "Columns": []
-    # }
+    xd = {
+        "WhereQuery": "ProductTitle LIKE '%RTX%3080%'",
+        # "WhereQuery": "Archived is false limit 10",
+        # "WhereQuery": "ProductTitle LIKE 'RTX%3080%'",
+        "Columns": []
+    }
     # res = delete_from_table_sql(db=db, table_name="Products", filter_query=xd, rollback=False)
     # res = query_table(db, "Products", {})
     # print(len(res))
-    # res = query_table_sql(api_db, "Products", xd)
-    # print(res)
+    res = query_table_sql(db, "Products", xd)
+    print(res)
     # for r in res:
     #     print(r)
     # res = query_table(db, "Products", {"ProductId": "N82E16814126588T"})
