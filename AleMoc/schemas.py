@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, List
+from typing_extensions import TypedDict
 import pydantic
 
 from AleMoc.database import models
@@ -58,3 +59,12 @@ class BaseModel(pydantic.BaseModel):
 
 class QueryTable(BaseModel):
     query_filter: dict
+
+
+class xdtest(TypedDict):
+    WhereQuery: List[str]
+    Columns: List[str]
+
+
+class QueryTableSql(BaseModel):
+    query_filter: xdtest
