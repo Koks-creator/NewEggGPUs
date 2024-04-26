@@ -43,13 +43,15 @@ def run_scraper(scraper_config: schemas.ScraperSchema,
     execution_id = f"{randint(1, 1000000):06d}"
 
     try:
-        prods, reviews, folder = sc.start_scraping(phrase=scraper_config.phrase, max_pages=scraper_config.limit, execution_id=execution_id)
+        prods, reviews, folder = sc.start_scraping(phrase=scraper_config.phrase.strip().replace(" ", "+"),
+                                                   max_pages=scraper_config.limit,
+                                                   execution_id=execution_id)
         folder = folder.split("/")[-1]
         if scraper_config.add_to_db:
             db_services.add_data_from_sink(db=db, folders_to_process=[folder])
-            return {"Msg": "added"}, status.HTTP_201_CREATED
+            return {"Msg": "added", "Products": prods, "Reviews": reviews}, status.HTTP_201_CREATED
         else:
-            return {"Msg": "done"}
+            return {"Msg": "done", "Products": prods, "Reviews": reviews}
     except Exception as e:
         return HTTPException(
             status_code=500,
@@ -59,9 +61,9 @@ def run_scraper(scraper_config: schemas.ScraperSchema,
 
 @app.post("/queryTable/")
 def query_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                      query: schemas.QueryTable,
-                      db: Session = Depends(get_db),
-                      ):
+                query: schemas.QueryTable,
+                db: Session = Depends(get_db),
+                ):
     if not authentication_check(credentials):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -70,6 +72,20 @@ def query_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
         )
     res = db_services.query_table(db=db, table_name=query.table_name, query_filter=query.query_filter)
     return res
+
+
+@app.post("/queryTableSql/")
+def query_table_sql(query: schemas.QueryTableSql,
+                    db: Session = Depends(get_db),
+                    ):
+
+    res = db_services.query_table_sql(db=db, table_name=query.table_name, query_filter=query.query_filter)
+    columns = db_services.TABLES[query.table_name]["Columns"]
+    if query.query_filter["Columns"]:
+        columns = query.query_filter["Columns"]
+
+    # nie umie w tuple, pewno cza obiket product wskazac
+    return {"Columns": columns, "res": res}
 
 
 if __name__ == '__main__':
