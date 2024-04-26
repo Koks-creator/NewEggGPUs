@@ -160,7 +160,7 @@ def query_table(db: _orm.Session, table_name: str, query_filter: dict) -> list[P
     return db.query(TABLES[table_name]["TableObj"]).filter_by(**query_filter).all()
 
 
-def query_table_sql(db: database.SessionLocal, table_name: str, query_filter: dict) -> list[Row]:
+def query_table_sql(db: database.SessionLocal, table_name: str, query_filter: dict) -> list[dict]:
     """
 
     :param db:
@@ -185,7 +185,7 @@ def query_table_sql(db: database.SessionLocal, table_name: str, query_filter: di
         raise Exception("We don't do that here.")
     res = db.execute(text(sql_query))
 
-    return [record for record in res]
+    return [list(record) for record in res]
 
 
 # ADMIN FUNCTIONS
