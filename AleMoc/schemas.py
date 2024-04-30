@@ -5,36 +5,37 @@ import pydantic
 
 from AleMoc.database import models
 
-'''
-zrob schema dla review i product
-'''
+
+class BaseModel(pydantic.BaseModel):
+    table_name: str
 
 
+# DB objects
 class ProductSchema(pydantic.BaseModel):
     Id: int
     ProductId: str
     DateCreated: datetime
     Archived: bool
-    ProductTitle: str
-    Url: str
-    Price: float
-    Currency: str
-    Brand: str
-    Series: str
-    Model: str
-    ChipsetManufacturer: str
-    GPUSeries: str
-    GPU: str
-    BoostClock: str
-    CUDACores: str
-    EffectiveMemoryClock: str
-    MemorySize: str
-    MemoryInterface: str
-    MemoryType: str
-    Interface: str
-    MultiMonitorSupport: str
-    HDMI: str
-    DisplayPort: str
+    ProductTitle: Union[str, None]
+    Url: Union[str, None]
+    Price: Union[float, None]
+    Currency: Union[str, None]
+    Brand: Union[str, None]
+    Series: Union[str, None]
+    Model: Union[str, None]
+    ChipsetManufacturer: Union[str, None]
+    GPUSeries: Union[str, None]
+    GPU: Union[str, None]
+    BoostClock: Union[str, None]
+    CUDACores: Union[str, None]
+    EffectiveMemoryClock: Union[str, None]
+    MemorySize: Union[str, None]
+    MemoryInterface: Union[str, None]
+    MemoryType: Union[str, None]
+    Interface: Union[str, None]
+    MultiMonitorSupport: Union[str, None]
+    HDMI: Union[str, None]
+    DisplayPort: Union[str, None]
 
 
 class ReviewSchema(pydantic.BaseModel):
@@ -47,24 +48,49 @@ class ReviewSchema(pydantic.BaseModel):
     Rating: int
 
 
+# scraper
 class ScraperSchema(pydantic.BaseModel):
     phrase: str
     limit: int = 0
     add_to_db: bool = True
 
 
-class BaseModel(pydantic.BaseModel):
-    table_name: str
+# TypedDicts
+class SelectQueryFilter(TypedDict):
+    WhereQuery: str
+    Columns: List[str]
 
+
+class UpdateQuery(TypedDict):
+    WhereQuery: str
+    SetQuery: str
+
+
+# Inputs
 
 class QueryTable(BaseModel):
     query_filter: dict
 
 
-class xdtest(TypedDict):
-    WhereQuery: List[str]
-    Columns: List[str]
-
-
 class QueryTableSql(BaseModel):
-    query_filter: xdtest
+    query_filter: SelectQueryFilter
+
+
+class UpdateTable(BaseModel):
+    query_filter: dict
+    updated_fields: dict
+    rollback: bool = False
+
+
+class UpdateTableSql(BaseModel):
+    update_query: UpdateQuery
+    rollback: bool
+
+
+# Response models
+class QueryTableSqlResp(pydantic.BaseModel):
+    Columns: List[str]
+    Result: List[List]
+
+
+
