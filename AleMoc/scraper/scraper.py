@@ -63,7 +63,7 @@ class NewEggScraper:
             }
         return None
 
-    def get_urls(self,  phrase: str, max_pages: int = 0, execution_id: str = "0") -> dict:
+    def get_urls(self,  phrase: str, execution_id: str, max_pages: int = 0) -> dict:
 
         link = f"{self._base_url}?SrchInDesc={phrase}&N={self._category_id}&PageSize={self.per_page}"
         self.scraper_logger.info(f"{link=}")
@@ -215,7 +215,7 @@ class NewEggScraper:
             json.dump(data, json_f, indent=4)
 
     def start_scraping(self, phrase: str, max_pages: int = 0, execution_id: str = "0", save: bool = True) -> Tuple[List[dict], List[dict], str]:
-        links = self.get_urls(max_pages=max_pages, phrase=phrase)
+        links = self.get_urls(max_pages=max_pages, phrase=phrase, execution_id=execution_id)
         # print(links)
         prods, reviews = self.run(links, execution_id)
 
