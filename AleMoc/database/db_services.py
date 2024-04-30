@@ -30,6 +30,12 @@ TABLES = {
 }
 
 
+class SqlInjectionException(Exception):
+    def __init__(self, message="We don't do that here"):
+        self.message = message
+        super().__init__(self.message)
+
+
 def exclude_keys(d: dict, keys: list) -> dict:
     return {k: v for k, v in d.items() if k not in keys}
 
@@ -156,11 +162,11 @@ def get_table_columns(table_name: str) -> list[str]:
     return TABLES[table_name]["Columns"]
 
 
-def query_table(db: _orm.Session, table_name: str, query_filter: dict) -> list[Products]:
+def query_table(db: _orm.Session, table_name: str, query_filter: dict) -> List[Products]:
     return db.query(TABLES[table_name]["TableObj"]).filter_by(**query_filter).all()
 
 
-def query_table_sql(db: database.SessionLocal, table_name: str, query_filter: dict) -> list[dict]:
+def query_table_sql(db: database.SessionLocal, table_name: str, query_filter: dict) -> List[List]:
     """
 
     :param db:
@@ -182,7 +188,7 @@ def query_table_sql(db: database.SessionLocal, table_name: str, query_filter: di
 
     sql_query = f"SELECT {unpacked_columns} FROM {table_name}{where_clause}"
     if not retarded_anti_sql_injection(sql_query):
-        raise Exception("We don't do that here.")
+        raise SqlInjectionException()
     res = db.execute(text(sql_query))
 
     return [list(record) for record in res]
@@ -197,13 +203,13 @@ def update_table(db: database.SessionLocal, table_name: str, query_filter: dict,
     for record in records:
         for key, value in updated_fields.items():
             setattr(record, key, value)
-            if not rollback:
-                db.commit()
-                db.refresh(record)
-            else:
-                db.rollback()
 
-            updated_records.append(record)
+        if not rollback:
+            db.commit()
+            db.refresh(record)
+        else:
+            db.rollback()
+        updated_records.append(record)
 
     return updated_records
 
@@ -213,8 +219,9 @@ def update_table_sql(db: database.SessionLocal, table_name: str, update_query: d
     given_set_clause = update_query["SetQuery"]
 
     sql_update_query = f"UPDATE {table_name} SET {given_set_clause} WHERE {given_where_clause}"
-    if not retarded_anti_sql_injection(sql_update_query):
-        raise Exception("We don't do that here.")
+    print(sql_update_query)
+    if not retarded_anti_sql_injection(given_where_clause + " " + given_set_clause):
+        raise SqlInjectionException()
     row_count = db.execute(text(sql_update_query)).rowcount
 
     if not rollback:
@@ -239,10 +246,10 @@ def delete_from_table_sql(db: database.SessionLocal, table_name: str, filter_que
     given_where_clause = filter_query["WhereQuery"]
 
     sql_delete_query = f"DELETE FROM {table_name} WHERE {given_where_clause}"
-    if not retarded_anti_sql_injection(sql_delete_query):
-        raise Exception("We don't do that here.")
+    if not retarded_anti_sql_injection(given_where_clause):
+        raise SqlInjectionException()
 
-    row_count = db.execute(text(sql_delete_query)).row_count
+    row_count = db.execute(text(sql_delete_query)).rowcount
 
     if not rollback:
         db.commit()
@@ -278,11 +285,11 @@ if __name__ == '__main__':
         # "WhereQuery": "ProductTitle LIKE 'RTX%3080%'",
         "Columns": []
     }
-    # res = delete_from_table_sql(db=db, table_name="Products", filter_query=xd, rollback=False)
+    res = delete_from_table_sql(db=db, table_name="Products", filter_query=xd, rollback=True)
     # res = query_table(db, "Products", {})
     # print(len(res))
-    res = query_table_sql(db, "Products", xd)
-    print(res)
+    # res = query_table_sql(db, "Products", xd)
+    # print(res)
     # for r in res:
     #     print(r)
     # res = query_table(db, "Products", {"ProductId": "N82E16814126588T"})
@@ -292,12 +299,14 @@ if __name__ == '__main__':
     # res = query_table(db, "Products", {"ProductId": "N82E16814126588T"})
     # for r in res:
     #     print(r)
-    # update_xd = {
-    #     "ProductId": "TESTUJEM23"
-    # }
+    update_xd = {
+        "ProductId": "test",
+        "ProductTitle": "dfdsfdsf"
+    }
     # # print(res)
-    # res = update_table(db=db, table_name="Products", query_filter={"ProductId": "TESTUJEM22"}, updated_fields=update_xd
-    #                    ,rollback=True)
+    res = update_table(db=db, table_name="Products", query_filter={"ProductTitle": "dfdsfdsf"}, updated_fields=update_xd
+                       ,rollback=True)
+    print(res)
     # sql_update_xd = {
     #     "WhereQuery": "ProductId = 'TESTUJEM323'",
     #     "SetQuery": "ProductId = 'TESTUJEM324'"
