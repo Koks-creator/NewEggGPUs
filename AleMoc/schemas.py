@@ -66,6 +66,10 @@ class UpdateQuery(TypedDict):
     SetQuery: str
 
 
+class DeleteQuery(TypedDict):
+    WhereQuery: str
+
+
 # Inputs
 
 class QueryTable(BaseModel):
@@ -79,12 +83,22 @@ class QueryTableSql(BaseModel):
 class UpdateTable(BaseModel):
     query_filter: dict
     updated_fields: dict
-    rollback: bool = False
+    rollback: bool = True
 
 
 class UpdateTableSql(BaseModel):
     update_query: UpdateQuery
     rollback: bool
+
+
+class DeleteFromTable(BaseModel):
+    query_filter: dict
+    rollback: bool = True
+
+
+class DeleteFromTableSql(BaseModel):
+    query_filter: DeleteQuery
+    rollback: bool = True
 
 
 # Response models
