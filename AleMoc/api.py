@@ -7,8 +7,8 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import uvicorn
 from sqlalchemy.orm import Session
-from sqlalchemy import text
-from werkzeug.security import generate_password_hash
+from sqlalchemy.exc import InvalidRequestError, OperationalError
+
 
 from AleMoc import get_db, ADMIN_USER
 from AleMoc.database import models, db_services
@@ -57,8 +57,14 @@ def api_status():
 def query_table(query: schemas.QueryTable,
                 db: Session = Depends(get_db),
                 ):
-    res = db_services.query_table(db=db, table_name=query.table_name, query_filter=query.query_filter)
-    return res
+    try:
+        res = db_services.query_table(db=db, table_name=query.table_name, query_filter=query.query_filter)
+        return res
+    except KeyError as ke_exc:
+        raise HTTPException(status_code=500, detail=f"No such table {ke_exc}")
+    except InvalidRequestError as ire_exc:
+        raise HTTPException(status_code=500,
+                            detail=str(ire_exc))
 
 
 @app.post("/queryTableSql/", response_model=schemas.QueryTableSqlResp)
@@ -66,13 +72,19 @@ def query_table_sql(query: schemas.QueryTableSql,
                     db: Session = Depends(get_db),
                     ):
 
-    res = db_services.query_table_sql(db=db, table_name=query.table_name, query_filter=query.query_filter)
-    columns = db_services.TABLES[query.table_name]["Columns"]
-    if query.query_filter["Columns"]:
-        columns = query.query_filter["Columns"]
+    try:
+        res = db_services.query_table_sql(db=db, table_name=query.table_name, query_filter=query.query_filter)
+        columns = db_services.TABLES[query.table_name]["Columns"]
+        if query.query_filter["Columns"]:
+            columns = query.query_filter["Columns"]
 
-    # you can use zip to create column: value list of dicts in query_table_sql but it takes too much time
-    return {"Columns": columns, "Result": res}
+        # you can use zip to create column: value list of dicts in query_table_sql but it takes too much time
+        return {"Columns": columns, "Result": res}
+    except OperationalError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except db_services.SqlInjectionException:
+        return "Your where or set query contained one of these: update, delete," \
+               " insert, drop, alter, truncate. Fuck you."
 
 
 # Needs Auth
@@ -81,26 +93,67 @@ def query_table_sql(query: schemas.QueryTableSql,
 def update_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
                  update_query: schemas.UpdateTable,
                  db: Session = Depends(get_db)):
-    res = db_services.update_table(db=db, table_name=update_query.table_name,
-                                   query_filter=update_query.query_filter,
-                                   updated_fields=update_query.updated_fields,
-                                   rollback=update_query.rollback)
-    return res
+    try:
+        res = db_services.update_table(db=db, table_name=update_query.table_name,
+                                       query_filter=update_query.query_filter,
+                                       updated_fields=update_query.updated_fields,
+                                       rollback=update_query.rollback)
+        return res
+    except KeyError as ke_exc:
+        raise HTTPException(status_code=500, detail=f"No such table {ke_exc}")
+    except InvalidRequestError as ire_exc:
+        raise HTTPException(status_code=500, detail=str(ire_exc))
 
 
 @app.put("/updateTableSql")
 @requires_authentication
-def update_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                 update_query: schemas.UpdateTableSql,
-                 db: Session = Depends(get_db)):
+def update_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                     update_query: schemas.UpdateTableSql,
+                     db: Session = Depends(get_db)):
 
     try:
         res = db_services.update_table_sql(db=db, table_name=update_query.table_name,
                                            update_query=update_query.update_query,
                                            rollback=update_query.rollback)
-        return {"UpdatedRowsCount": res}
+        return {"UpdatedRecordsCount": res}
+    except OperationalError as e:
+        raise HTTPException(status_code=500, detail=str(e))
     except db_services.SqlInjectionException:
-        return "EEEEEEEEEE"
+        return "Your where or set query contained one of these: update, delete," \
+               " insert, drop, alter, truncate. Fuck you."
+
+
+@app.delete("/deleteFromTable")
+@requires_authentication
+def delete_from_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                      delete_query: schemas.DeleteFromTable,
+                      db: Session = Depends(get_db)):
+    try:
+        res = db_services.delete_from_table(db=db, table_name=delete_query.table_name,
+                                            query_filter=delete_query.query_filter,
+                                            rollback=delete_query.rollback)
+        return {"DeletedRecordsCount": res}
+    except KeyError as ke_exc:
+        raise HTTPException(status_code=500, detail=f"No such table {ke_exc}")
+    except InvalidRequestError as ire_exc:
+        raise HTTPException(status_code=500, detail=str(ire_exc))
+
+
+@app.delete("/deleteFromTableSql")
+@requires_authentication
+def delete_from_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                          delete_query: schemas.DeleteFromTableSql,
+                          db: Session = Depends(get_db)):
+    try:
+        res = db_services.delete_from_table_sql(db=db, table_name=delete_query.table_name,
+                                                query_filter=delete_query.query_filter,
+                                                rollback=delete_query.rollback)
+        return {"DeletedRecordsCount": res}
+    except OperationalError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except db_services.SqlInjectionException:
+        return "Your where or set query contained one of these: update, delete," \
+               " insert, drop, alter, truncate. Fuck you."
 
 
 @app.post("/runScraper")
