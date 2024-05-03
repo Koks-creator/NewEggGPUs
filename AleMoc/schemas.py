@@ -55,6 +55,10 @@ class ScraperSchema(pydantic.BaseModel):
     add_to_db: bool = True
 
 
+class SinkProcessSchema(pydantic.BaseModel):
+    folder_names: list
+
+
 # TypedDicts
 class SelectQueryFilter(TypedDict):
     WhereQuery: str
@@ -105,6 +109,3 @@ class DeleteFromTableSql(BaseModel):
 class QueryTableSqlResp(pydantic.BaseModel):
     Columns: List[str]
     Result: List[List]
-
-
-
