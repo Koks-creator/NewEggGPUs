@@ -1,4 +1,4 @@
-from typing import Annotated, List, Union
+from typing import Annotated, List, Union, Optional
 import logging
 from functools import wraps
 from random import randint
@@ -83,7 +83,7 @@ def query_table_sql(query: schemas.QueryTableSql,
     except OperationalError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except db_services.SqlInjectionException:
-        return "Your where or set query contained one of these: update, delete," \
+        return "Your where clause contained one of these: update, delete," \
                " insert, drop, alter, truncate. Fuck you."
 
 
@@ -119,7 +119,7 @@ def update_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(securi
     except OperationalError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except db_services.SqlInjectionException:
-        return "Your where or set query contained one of these: update, delete," \
+        return "Your where or set clause contained one of these: update, delete," \
                " insert, drop, alter, truncate. Fuck you."
 
 
@@ -152,7 +152,7 @@ def delete_from_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(s
     except OperationalError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except db_services.SqlInjectionException:
-        return "Your where or set query contained one of these: update, delete," \
+        return "Your where clause contained one of these: update, delete," \
                " insert, drop, alter, truncate. Fuck you."
 
 
@@ -178,6 +178,33 @@ def run_scraper(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
             status_code=500,
             detail=f"Error occurred: {e}"
         )
+
+
+@app.get("/listSink")
+@requires_authentication
+def list_sink(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
+    return {"SinkFiles": db_services.list_sink()}
+
+
+@app.post("/processSink", status_code=201)
+@requires_authentication
+def process_sink(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                 sink_process: schemas.SinkProcessSchema, db: Session = Depends(get_db)):
+
+    sink_folders = db_services.list_sink()
+    non_exist = [f for f in sink_process.folder_names if f not in sink_folders]
+
+    if not sink_folders:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Sink folder is empty"
+        )
+    if non_exist:
+        raise HTTPException(
+            status_code=500,
+            detail=f"These folders doesn't exist: {non_exist}"
+        )
+    return db_services.add_data_from_sink(db=db, folders_to_process=sink_process.folder_names)
 
 
 if __name__ == '__main__':
