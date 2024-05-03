@@ -99,14 +99,18 @@ def add_review(db: database.SessionLocal, new_review: Reviews) -> bool:
     return False
 
 
-def add_data_from_sink(db: database.SessionLocal, folders_to_process: List[str] = None) -> None:
+def list_sink() -> List[str]:
+    return os.listdir(f"{Config.PROJECT_MAIN_PATH}/{Config.SINK_FOLDER}")
+
+
+def add_data_from_sink(db: database.SessionLocal, folders_to_process: List[str] = None) -> dict:
     # counter
     counter = {table_name: 0 for table_name in list(TABLES.keys())}
 
     db_services_logger.info("Adding records from sink")
     sink_path = f"{Config.PROJECT_MAIN_PATH}/{Config.SINK_FOLDER}"
 
-    data_folders = os.listdir(sink_path)
+    data_folders = list_sink()
     if folders_to_process:
         data_folders = [folder for folder in data_folders if folder in folders_to_process]
     for data_folder in data_folders:
@@ -157,6 +161,8 @@ def add_data_from_sink(db: database.SessionLocal, folders_to_process: List[str] 
     db_services_logger.info(f"{counter=}")
     db_services_logger.info(f"Done")
 
+    return counter
+
 
 def get_table_columns(table_name: str) -> list[str]:
     return TABLES[table_name]["Columns"]
@@ -171,7 +177,7 @@ def query_table_sql(db: database.SessionLocal, table_name: str, query_filter: di
 
     :param db:
     :param table_name:
-    :param filter_q: should have WhereQuery key with filter query and Columns
+    :param query_filter: should have WhereQuery key with filter query and Columns
            key which is a list of columns to select, if empty then *
     :return:
     """
@@ -219,7 +225,7 @@ def update_table_sql(db: database.SessionLocal, table_name: str, update_query: d
     given_set_clause = update_query["SetQuery"]
 
     sql_update_query = f"UPDATE {table_name} SET {given_set_clause} WHERE {given_where_clause}"
-    print(sql_update_query)
+
     if not retarded_anti_sql_injection(given_where_clause + " " + given_set_clause):
         raise SqlInjectionException()
     row_count = db.execute(text(sql_update_query)).rowcount
@@ -242,8 +248,8 @@ def delete_from_table(db: database.SessionLocal, table_name: str, query_filter: 
     return row_count
 
 
-def delete_from_table_sql(db: database.SessionLocal, table_name: str, filter_query: dict, rollback: bool = False) -> int:
-    given_where_clause = filter_query["WhereQuery"]
+def delete_from_table_sql(db: database.SessionLocal, table_name: str, query_filter: dict, rollback: bool = False) -> int:
+    given_where_clause = query_filter["WhereQuery"]
 
     sql_delete_query = f"DELETE FROM {table_name} WHERE {given_where_clause}"
     if not retarded_anti_sql_injection(given_where_clause):
@@ -261,6 +267,7 @@ def delete_from_table_sql(db: database.SessionLocal, table_name: str, filter_que
 
 if __name__ == '__main__':
     db = database.SessionLocal()
+    print(list_sink())
     # add_data_from_sink(db)
     # from AleMoc.database.database import SessionLocal, get_db
     # import fastapi as _fastapi
@@ -285,9 +292,9 @@ if __name__ == '__main__':
         # "WhereQuery": "ProductTitle LIKE 'RTX%3080%'",
         "Columns": []
     }
-    res = delete_from_table_sql(db=db, table_name="Products", filter_query=xd, rollback=True)
-    # res = query_table(db, "Products", {})
-    # print(len(res))
+    # res = delete_from_table_sql(db=db, table_name="Products", query_filter=xd, rollback=True)
+    # # res = query_table(db, "Products", {})
+    # print(res)
     # res = query_table_sql(db, "Products", xd)
     # print(res)
     # for r in res:
@@ -304,9 +311,9 @@ if __name__ == '__main__':
         "ProductTitle": "dfdsfdsf"
     }
     # # print(res)
-    res = update_table(db=db, table_name="Products", query_filter={"ProductTitle": "dfdsfdsf"}, updated_fields=update_xd
-                       ,rollback=True)
-    print(res)
+    # res = update_table(db=db, table_name="Products", query_filter={"ProductTitle": "dfdsfdsf"}, updated_fields=update_xd
+    #                    ,rollback=True)
+    # print(res)
     # sql_update_xd = {
     #     "WhereQuery": "ProductId = 'TESTUJEM323'",
     #     "SetQuery": "ProductId = 'TESTUJEM324'"
