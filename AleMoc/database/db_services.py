@@ -4,6 +4,7 @@ import logging
 from typing import List
 import shutil
 from datetime import datetime
+from sqlalchemy.sql.schema import Table
 from sqlalchemy import text
 from sqlalchemy.engine.row import Row
 import sqlalchemy.orm as _orm
@@ -34,6 +35,29 @@ class SqlInjectionException(Exception):
     def __init__(self, message="We don't do that here"):
         self.message = message
         super().__init__(self.message)
+
+
+def generate_table_schema(table: Table) -> dict:
+    table_schema = {
+        "table_name": table.name,
+        "columns": []
+    }
+    for column in table.columns:
+        column_info = {
+            "name": column.name,
+            "type": str(column.type),
+            "primary_key": column.primary_key,
+        }
+        table_schema["columns"].append(column_info)
+    return table_schema
+
+
+def get_table_schemas() -> dict:
+    table_schemas = {}
+    for table_name, value in TABLES.items():
+        table_schemas[table_name] = generate_table_schema(table=value["TableObj"].__table__)
+
+    return table_schemas
 
 
 def exclude_keys(d: dict, keys: list) -> dict:
@@ -267,7 +291,7 @@ def delete_from_table_sql(db: database.SessionLocal, table_name: str, query_filt
 
 if __name__ == '__main__':
     db = database.SessionLocal()
-    print(list_sink())
+    # print(get_table_schemas()["Products"])
     # add_data_from_sink(db)
     # from AleMoc.database.database import SessionLocal, get_db
     # import fastapi as _fastapi
@@ -299,7 +323,8 @@ if __name__ == '__main__':
     # print(res)
     # for r in res:
     #     print(r)
-    # res = query_table(db, "Products", {"ProductId": "N82E16814126588T"})
+    res = query_table(db, "Products", {"ProductId": "1FT-000A-003A4"})
+    print(res[0])
     # for r in res:
     #     print(r)
     #
