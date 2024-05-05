@@ -41,6 +41,7 @@ class ProductSchema(pydantic.BaseModel):
 class ReviewSchema(pydantic.BaseModel):
     Id: int
     ProductId: str
+    ProductTitle: str
     DateCreated: datetime
     Author: str
     DatePublished: datetime
