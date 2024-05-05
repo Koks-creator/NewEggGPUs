@@ -51,6 +51,7 @@ class Reviews(Base):
 
     Id = sql.Column(sql.Integer, primary_key=True, index=True)
     ProductId = sql.Column(sql.String, sql.ForeignKey("Products.ProductId"))
+    ProductTitle = sql.Column(sql.String, nullable=True)
     DateCreated = sql.Column(sql.DateTime, default=datetime.utcnow)
     Author = sql.Column(sql.String)
     DatePublished = sql.Column(sql.DateTime)
