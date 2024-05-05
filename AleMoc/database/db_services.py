@@ -324,7 +324,7 @@ if __name__ == '__main__':
     # for r in res:
     #     print(r)
     res = query_table(db, "Products", {"ProductId": "1FT-000A-003A4"})
-    print(res[0])
+    print(res[0].reviews)
     # for r in res:
     #     print(r)
     #
