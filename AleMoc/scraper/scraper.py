@@ -162,6 +162,7 @@ class NewEggScraper:
                         product_reviews = defaultdict(list)
                         for review in reviews["review"]:
                             review_data = defaultdict(dict)
+                            review_data["ProductTitle"] = product_title
                             for db_field, json_field in REVIEW_FIELDS.items():
                                 splitted = json_field.split("_")
                                 if len(splitted) > 1:
@@ -190,6 +191,7 @@ class NewEggScraper:
     def run(self, links: dict, execution_id: str) -> Tuple[List, List]:
         products = []
         reviews = []
+        reviews_count = 0
 
         self.scraper_logger.info(f"[Execution id: {execution_id}] Starting")
         start = perf_counter()
@@ -198,15 +200,20 @@ class NewEggScraper:
         for r in res:
             products.extend(r[0])
             reviews.extend(r[1])
+            for review_dict in r[1]:
+                for k, v in review_dict.items():
+                    reviews_count += len(v)
         self.scraper_logger.info(f"[Execution id: {execution_id}] Scraping took: {round(perf_counter() - start, 2)}s")
 
         self.scraper_logger.debug(f"[Execution id: {execution_id}] {products=}")
         self.scraper_logger.debug(f"[Execution id: {execution_id}] {reviews=}")
 
         # return list(itertools.chain(*products)), list(itertools.chain(*reviews))
+        # flatten
         key_func = lambda d: next(iter(d))
         products = [next(group) for key, group in groupby(sorted(products, key=key_func), key=key_func)]
         reviews = [next(group) for key, group in groupby(sorted(reviews, key=key_func), key=key_func)]
+        self.scraper_logger.info(f"[Execution id: {execution_id}] Product: {len(products)}, Reviews: {reviews_count}")
         return products, reviews
 
     @staticmethod
