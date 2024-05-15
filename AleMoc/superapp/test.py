@@ -1,5 +1,5 @@
+from datetime import datetime
 import plotly.graph_objects as go
-import numpy as np
 import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
@@ -76,21 +76,31 @@ def update_options(cache, n_clicks, n_clicks2, dataframe, selected_options):
             x = pd.to_datetime(x).dt.strftime('%Y-%m-%d %H:%M:%s')
             y = df["Price"]
             labels = df["ProductTitle"]
+            urls = df["Url"]
 
             traces = []
-            for xi, yi, label in zip(x, y, labels):
+            plot_annotes = []
+            for xi, yi, label, url in zip(x, y, labels, urls):
                 trace = go.Scatter(
                     x=[xi],
                     y=[yi],
                     mode="markers",
                     marker=dict(size=10, color=services.graph_color_map[label]),
-                    name=label[:70]
+                    name=label[:70],
+                    hoverinfo="text",
+                    text=f"{yi}$, {label} ({xi.split('.')[0]})",
                 )
                 traces.append(trace)
+                plot_annotes.append(dict(x=xi,
+                                         y=yi,
+                                         text=f"""<a href="{url}"> </a>""",
+                                         showarrow=False,
+                                         ))
 
             layout = go.Layout(
-                title="xddd",
-                yaxis=dict(title='Points')
+                title="Price History",
+                yaxis=dict(title='Price'),
+                annotations=plot_annotes
             )
 
             fig = go.Figure(data=traces, layout=layout)
