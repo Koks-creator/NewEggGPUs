@@ -1,4 +1,4 @@
-from datetime import datetime
+import numpy as np
 import plotly.graph_objects as go
 import dash
 from dash import dcc, html
@@ -68,6 +68,7 @@ def update_options(cache, n_clicks, n_clicks2, dataframe, selected_options):
     fig = {}
     if dataframe:
         df = pd.DataFrame.from_dict(dataframe)
+        df = df[df["Price"].notna()]
 
         # filter
         df = df[df["ProductTitle"].isin(selected_options)]
