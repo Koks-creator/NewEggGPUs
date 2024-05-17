@@ -1,6 +1,6 @@
-import numpy as np
 import plotly.graph_objects as go
 import dash
+from dash import dash_table
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Output, Input, State
@@ -17,7 +17,8 @@ app = dash.Dash(
 
 app.layout = html.Div([
     dcc.Store(id="cache", data=None),
-    dcc.Store(id="dataframe", data=None),
+    dcc.Store(id="products-dataframe", data=None),
+    dcc.Store(id="reviews-dataframe", data=None),
     html.H1("xd"),
     dbc.Input(id="phrase_input", value='', type="text"),
     dbc.Button("Search", id="add-phrase-button", n_clicks=0),
@@ -29,6 +30,7 @@ app.layout = html.Div([
     ], style={'maxHeight': '140px', "height": "140px", "overflow-y": "scroll"}),
     dbc.Button("Apply Filter", id="apply-button", n_clicks=0),
     dcc.Graph(id="graph"),
+html.Div(id="table")
 ])
 
 
@@ -49,11 +51,13 @@ def update_message(n_clicks, phrase_input):
               [Input("cache", "data"),
                Input('add-phrase-button', 'n_clicks'),
                Input('apply-button', 'n_clicks'),
-               Input('dataframe', 'data'),
+               Input('products-dataframe', 'data'),
+               Input("reviews-dataframe", "data")
                ],
               [State('dropdown-options', 'value')]
               )
-def update_options(cache, n_clicks, n_clicks2, dataframe, selected_options):
+def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataframe, selected_options):
+
     if cache:
         options = cache
     else:
@@ -66,35 +70,41 @@ def update_options(cache, n_clicks, n_clicks2, dataframe, selected_options):
         selected_options.remove("Select All")
 
     fig = {}
-    if dataframe:
-        df = pd.DataFrame.from_dict(dataframe)
-        df = df[df["Price"].notna()]
+    if dataframe_products and reviews_dataframe:
+        df_products = pd.DataFrame.from_dict(dataframe_products)
+        df_products = df_products[df_products["Price"].notna()]
+
+        df_reviews = pd.DataFrame.from_dict(reviews_dataframe)
 
         # filter
-        df = df[df["ProductTitle"].isin(selected_options)]
-        if len(df):
-            x = df["DateCreated"]
-            x = pd.to_datetime(x).dt.strftime('%Y-%m-%d %H:%M:%s')
-            y = df["Price"]
-            labels = df["ProductTitle"]
-            urls = df["Url"]
-
+        df_products = df_products[df_products["ProductTitle"].isin(selected_options)]
+        if len(df_products):
+            # x = df["DateCreated"]
+            # x = pd.to_datetime(x).dt.strftime('%Y-%m-%d %H:%M:%s')
+            # y = df["Price"]
+            # labels = df["ProductTitle"]
+            # urls = df["Url"]
+            # spechs = df[["Brand", "Series", "Model", "ChipsetManufacturer", "GPUSeries", "GPU"]]
+            df_products['DateCreated'] = pd.to_datetime(df_products['DateCreated'])
+            df_products["DateCreated"] = df_products["DateCreated"].dt.strftime('%Y-%m-%d %H:%M:%')
             traces = []
             plot_annotes = []
-            for xi, yi, label, url in zip(x, y, labels, urls):
+            # for xi, yi, label, url in zip(x, y, labels, urls):
+            rows = df_products.iterrows()
+            for ind, row in rows:
                 trace = go.Scatter(
-                    x=[xi],
-                    y=[yi],
+                    x=[row["DateCreated"]],
+                    y=[row["Price"]],
                     mode="markers",
-                    marker=dict(size=10, color=services.graph_color_map[label]),
-                    name=label[:70],
+                    marker=dict(size=10, color=services.graph_color_map[row["ProductTitle"]]),
+                    name=row["ProductTitle"][:70],
                     hoverinfo="text",
-                    text=f"{yi}$, {label} ({xi.split('.')[0]})",
+                    text=services.create_tooltip(row=row),
                 )
                 traces.append(trace)
-                plot_annotes.append(dict(x=xi,
-                                         y=yi,
-                                         text=f"""<a href="{url}"> </a>""",
+                plot_annotes.append(dict(x=row["DateCreated"],
+                                         y=row["Price"],
+                                         text=f"""<a href="{row["Url"]}"> </a>""",
                                          showarrow=False,
                                          ))
 
@@ -114,19 +124,21 @@ def update_options(cache, n_clicks, n_clicks2, dataframe, selected_options):
 
 @app.callback(
     [Output("cache", "data"),
-     Output("dataframe", "data")],
+     Output("products-dataframe", "data"),
+     Output("reviews-dataframe", "data")
+     ],
     [Input("add-phrase-button", "n_clicks")],
     [State("phrase_input", "value")]
 )
 def update_cache(n_clicks, phrase):
-    # print(c)
     if n_clicks > 0 and phrase.strip() != "":
-        df = services.query_table(table_name="Products", where=f"ProductTitle like '%{phrase}%'")
+        df_products = services.query_table(table_name="Products", where=f"ProductTitle like '%{phrase}%'")
+        df_reviews = services.query_table(table_name="Reviews", where=f"ProductTitle like '%{phrase}%'")
         options = ["Select All"]
-        options.extend(df["ProductTitle"].unique().tolist())
+        options.extend(df_products["ProductTitle"].unique().tolist())
 
-        return [options, df.to_dict()]
-    return None, None
+        return [options, df_products.to_dict(), df_reviews.to_dict()]
+    return None, None, None
 
 
 if __name__ == '__main__':
