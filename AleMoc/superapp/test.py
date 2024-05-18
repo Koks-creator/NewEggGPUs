@@ -1,3 +1,4 @@
+from datetime import date
 import plotly.graph_objects as go
 import dash
 from dash import dash_table
@@ -21,6 +22,14 @@ app.layout = html.Div([
     dcc.Store(id="reviews-dataframe", data=None),
     html.H1("xd"),
     dbc.Input(id="phrase_input", value='', type="text"),
+    dcc.DatePickerRange(
+            id='date-picker',
+            min_date_allowed=date(1900, 1, 1),
+            max_date_allowed=date(9999, 1, 1),
+            initial_visible_month=date(2024, 5, 1),
+            # end_date=date(9999, 1, 1),
+            # start_date=date(1900, 1, 1)
+        ),
     dbc.Button("Search", id="add-phrase-button", n_clicks=0),
     html.H4(id="msg"),
     html.H4(id="msg2"),
@@ -30,7 +39,7 @@ app.layout = html.Div([
     ], style={'maxHeight': '140px', "height": "140px", "overflow-y": "scroll"}),
     dbc.Button("Apply Filter", id="apply-button", n_clicks=0),
     dcc.Graph(id="graph"),
-html.Div(id="table")
+    html.Div(id="table")
 ])
 
 
@@ -46,17 +55,19 @@ def update_message(n_clicks, phrase_input):
 
 @app.callback([Output('dropdown-options', 'options'),
                Output('dropdown-options', 'value'),
-               Output('graph', 'figure')
+               Output('graph', 'figure'),
+               Output('table', 'children')
                ],
               [Input("cache", "data"),
                Input('add-phrase-button', 'n_clicks'),
                Input('apply-button', 'n_clicks'),
                Input('products-dataframe', 'data'),
-               Input("reviews-dataframe", "data")
+               Input("reviews-dataframe", "data"),
                ],
               [State('dropdown-options', 'value')]
               )
-def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataframe, selected_options):
+def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataframe,
+                    selected_options):
 
     if cache:
         options = cache
@@ -70,6 +81,7 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
         selected_options.remove("Select All")
 
     fig = {}
+    table = dash_table.DataTable()
     if dataframe_products and reviews_dataframe:
         df_products = pd.DataFrame.from_dict(dataframe_products)
         df_products = df_products[df_products["Price"].notna()]
@@ -78,6 +90,7 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
 
         # filter
         df_products = df_products[df_products["ProductTitle"].isin(selected_options)]
+        df_reviews = df_reviews[df_reviews["ProductTitle"].isin(selected_options)]
         if len(df_products):
             # x = df["DateCreated"]
             # x = pd.to_datetime(x).dt.strftime('%Y-%m-%d %H:%M:%s')
@@ -116,9 +129,15 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
 
             fig = go.Figure(data=traces, layout=layout)
 
+            df_table = df_reviews[["ProductTitle", "Description", "Rating"]]
+            table = dash_table.DataTable(
+                data=df_table.to_dict("records"),
+                columns=[{"id": c, "name": c} for c in df_table.columns]
+            )
+
     return (
         [{'label': option, 'value': option} for option in options],  # Update dropdown options
-        selected_options, fig
+        selected_options, fig, table
     )
 
 
@@ -127,13 +146,21 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
      Output("products-dataframe", "data"),
      Output("reviews-dataframe", "data")
      ],
-    [Input("add-phrase-button", "n_clicks")],
+    [Input("add-phrase-button", "n_clicks"),
+     Input('date-picker', 'start_date'),
+     Input('date-picker', 'end_date')
+     ],
     [State("phrase_input", "value")]
 )
-def update_cache(n_clicks, phrase):
+def update_cache(n_clicks, start_date, end_date, phrase):
     if n_clicks > 0 and phrase.strip() != "":
-        df_products = services.query_table(table_name="Products", where=f"ProductTitle like '%{phrase}%'")
-        df_reviews = services.query_table(table_name="Reviews", where=f"ProductTitle like '%{phrase}%'")
+        start_date = start_date if start_date else "2000-01-01"
+        end_date = end_date if end_date else "2100-01-01"
+        where_clause = f"ProductTitle LIKE '%{phrase}%' AND DateCreated BETWEEN '{start_date}' AND '{end_date}'"
+
+        df_products = services.query_table(table_name="Products", where=where_clause)
+        df_reviews = services.query_table(table_name="Reviews", where=where_clause)
+
         options = ["Select All"]
         options.extend(df_products["ProductTitle"].unique().tolist())
 
