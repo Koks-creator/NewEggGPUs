@@ -39,7 +39,7 @@ app.layout = html.Div([
     ], style={'maxHeight': '140px', "height": "140px", "overflow-y": "scroll"}),
     dbc.Button("Apply Filter", id="apply-button", n_clicks=0),
     dcc.Graph(id="graph"),
-    html.Div(id="table")
+    html.Div(id="table", style={"width": "1400px"})
 ])
 
 
@@ -66,8 +66,7 @@ def update_message(n_clicks, phrase_input):
                ],
               [State('dropdown-options', 'value')]
               )
-def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataframe,
-                    selected_options):
+def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataframe, selected_options):
 
     if cache:
         options = cache
@@ -91,13 +90,16 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
         # filter
         df_products = df_products[df_products["ProductTitle"].isin(selected_options)]
         df_reviews = df_reviews[df_reviews["ProductTitle"].isin(selected_options)]
+        df_reviews["DatePublished"] = pd.to_datetime(df_reviews["DatePublished"]).dt.strftime("%Y-%m-%d")
+        # join
+        df_table = pd.concat([df_reviews, df_products], axis=1, join='inner')
+        df_table = df_table.loc[:, ~df_table.columns.duplicated()].copy()
+        #  https://stackoverflow.com/questions/14984119/python-pandas-remove-duplicate-columns
+        df_table["Nwm"] = [f"""[{row[1]["ProductTitle"]}]({row[1]["Url"]})""" for row in
+                           df_table[["ProductTitle", "Url"]].iterrows()]
+        df_table = df_table[["Nwm", "Description", "Rating", "DatePublished", "Author"]]
+
         if len(df_products):
-            # x = df["DateCreated"]
-            # x = pd.to_datetime(x).dt.strftime('%Y-%m-%d %H:%M:%s')
-            # y = df["Price"]
-            # labels = df["ProductTitle"]
-            # urls = df["Url"]
-            # spechs = df[["Brand", "Series", "Model", "ChipsetManufacturer", "GPUSeries", "GPU"]]
             df_products['DateCreated'] = pd.to_datetime(df_products['DateCreated'])
             df_products["DateCreated"] = df_products["DateCreated"].dt.strftime('%Y-%m-%d %H:%M:%')
             traces = []
@@ -129,10 +131,72 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
 
             fig = go.Figure(data=traces, layout=layout)
 
-            df_table = df_reviews[["ProductTitle", "Description", "Rating"]]
             table = dash_table.DataTable(
                 data=df_table.to_dict("records"),
-                columns=[{"id": c, "name": c} for c in df_table.columns]
+                columns=[{'id': x, 'name': x, 'presentation': 'markdown'} if x == 'Nwm' else {'id': x, 'name': x}
+                         for x in df_table.columns],
+                style_table={'height': '627px', 'overflowY': 'auto'},
+                style_as_list_view=True,
+                page_action='native',
+                page_current=0,
+                page_size=10,
+                style_cell={
+                    # 'maxWidth': '150px',
+                    'whiteSpace': 'normal',
+                    'overflow': 'hidden',
+                    'textOverflow': 'ellipsis',
+                },
+                style_cell_conditional=[
+                    {
+                     "if": {
+                         'column_id': 'ProductTitle',
+                     },
+                     'width': '20%', 'whiteSpace': 'normal', 'textAlign': 'left',
+                    },
+                    {
+                     'if': {
+                         'column_id': 'Description'
+                     },
+                     'width': '65%', 'whiteSpace': 'normal', 'textAlign': 'left'
+                    },
+                    {'if': {
+                        'column_id': 'Rating'
+                    },
+                     'width': '5%', 'whiteSpace': 'normal', 'textAlign': 'center'
+                    },
+                    {'if': {
+                        'column_id': 'Author'
+                    },
+                        'width': '10%', 'whiteSpace': 'normal', 'textAlign': 'center'
+                    }
+                ],
+                style_data_conditional=[
+                    {
+                        "if": {
+                            "filter_query": "{Rating} >= 4",
+                            "column_id": ["Rating"]
+                        },
+                        "backgroundColor": "#386641"
+
+                    },
+                    {
+                        "if": {
+                            "filter_query": "{Rating} <= 2",
+                            "column_id": ["Rating"]
+                        },
+                        "backgroundColor": "#ae2012"
+
+                    },
+                    {
+                        "if": {
+                            "filter_query": "{Rating} > 2 && {Rating} < 4",
+                            "column_id": ["Rating"]
+                        },
+                        "backgroundColor": "#fcbf49"
+
+                    }
+
+                ]
             )
 
     return (
