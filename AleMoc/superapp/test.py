@@ -7,7 +7,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Output, Input, State
 import pandas as pd
 
-from AleMoc.superapp import services
+from AleMoc.superapp import services, styles
 
 
 external_css = [dbc.themes.BOOTSTRAP]
@@ -95,9 +95,9 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
         df_table = pd.concat([df_reviews, df_products], axis=1, join='inner')
         df_table = df_table.loc[:, ~df_table.columns.duplicated()].copy()
         #  https://stackoverflow.com/questions/14984119/python-pandas-remove-duplicate-columns
-        df_table["Nwm"] = [f"""[{row[1]["ProductTitle"]}]({row[1]["Url"]})""" for row in
+        df_table["Product"] = [f"""[{row[1]["ProductTitle"]}]({row[1]["Url"]})""" for row in
                            df_table[["ProductTitle", "Url"]].iterrows()]
-        df_table = df_table[["Nwm", "Description", "Rating", "DatePublished", "Author"]]
+        df_table = df_table[["Product", "Description", "Rating", "DatePublished", "Author"]]
 
         if len(df_products):
             df_products['DateCreated'] = pd.to_datetime(df_products['DateCreated'])
@@ -133,70 +133,17 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
 
             table = dash_table.DataTable(
                 data=df_table.to_dict("records"),
-                columns=[{'id': x, 'name': x, 'presentation': 'markdown'} if x == 'Nwm' else {'id': x, 'name': x}
+                columns=[{'id': x, 'name': x, 'presentation': 'markdown'} if x == 'Product' else {'id': x, 'name': x}
                          for x in df_table.columns],
-                style_table={'height': '627px', 'overflowY': 'auto'},
+                style_table=styles.style_table,
                 style_as_list_view=True,
                 page_action='native',
                 page_current=0,
                 page_size=10,
-                style_cell={
-                    # 'maxWidth': '150px',
-                    'whiteSpace': 'normal',
-                    'overflow': 'hidden',
-                    'textOverflow': 'ellipsis',
-                },
-                style_cell_conditional=[
-                    {
-                     "if": {
-                         'column_id': 'ProductTitle',
-                     },
-                     'width': '20%', 'whiteSpace': 'normal', 'textAlign': 'left',
-                    },
-                    {
-                     'if': {
-                         'column_id': 'Description'
-                     },
-                     'width': '65%', 'whiteSpace': 'normal', 'textAlign': 'left'
-                    },
-                    {'if': {
-                        'column_id': 'Rating'
-                    },
-                     'width': '5%', 'whiteSpace': 'normal', 'textAlign': 'center'
-                    },
-                    {'if': {
-                        'column_id': 'Author'
-                    },
-                        'width': '10%', 'whiteSpace': 'normal', 'textAlign': 'center'
-                    }
-                ],
-                style_data_conditional=[
-                    {
-                        "if": {
-                            "filter_query": "{Rating} >= 4",
-                            "column_id": ["Rating"]
-                        },
-                        "backgroundColor": "#386641"
-
-                    },
-                    {
-                        "if": {
-                            "filter_query": "{Rating} <= 2",
-                            "column_id": ["Rating"]
-                        },
-                        "backgroundColor": "#ae2012"
-
-                    },
-                    {
-                        "if": {
-                            "filter_query": "{Rating} > 2 && {Rating} < 4",
-                            "column_id": ["Rating"]
-                        },
-                        "backgroundColor": "#fcbf49"
-
-                    }
-
-                ]
+                style_cell=styles.style_cell,
+                style_header=styles.style_header,
+                style_cell_conditional=styles.style_cell_conditional,
+                style_data_conditional=styles.style_data_conditional
             )
 
     return (
