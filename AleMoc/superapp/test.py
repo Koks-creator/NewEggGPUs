@@ -92,11 +92,11 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
         df_reviews = df_reviews[df_reviews["ProductTitle"].isin(selected_options)]
         df_reviews["DatePublished"] = pd.to_datetime(df_reviews["DatePublished"]).dt.strftime("%Y-%m-%d")
         # join
-        df_table = pd.concat([df_reviews, df_products], axis=1, join='inner')
-        df_table = df_table.loc[:, ~df_table.columns.duplicated()].copy()
-        #  https://stackoverflow.com/questions/14984119/python-pandas-remove-duplicate-columns
-        df_table["Product"] = [f"""[{row[1]["ProductTitle"]}]({row[1]["Url"]})""" for row in
-                           df_table[["ProductTitle", "Url"]].iterrows()]
+        df_table = df_reviews.merge(df_products, on="ProductId")
+
+        # Create column with link
+        df_table["Product"] = [f"""[{row[1]["ProductTitle_x"]}]({row[1]["Url"]})""" for row in
+                               df_table[["ProductTitle_x", "Url"]].iterrows()]
         df_table = df_table[["Product", "Description", "Rating", "DatePublished", "Author"]]
 
         if len(df_products):
