@@ -10,52 +10,80 @@ import pandas as pd
 from AleMoc.superapp import services, styles
 
 
+PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
+
+
 external_css = [dbc.themes.BOOTSTRAP]
 app = dash.Dash(
-    "Test",
+    "GpuApp",
     external_stylesheets=external_css,
 )
 
+
+navbar = dbc.Navbar(
+    dbc.Row(
+        [
+            dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
+            dbc.Col(dbc.NavbarBrand("Navbar", className="ms-2")),
+        ]), color="dark", dark=True
+)
+
 app.layout = html.Div([
+    navbar,
     dcc.Store(id="cache", data=None),
     dcc.Store(id="products-dataframe", data=None),
     dcc.Store(id="reviews-dataframe", data=None),
-    html.H1("xd"),
-    dbc.Input(id="phrase_input", value='', type="text"),
-    dcc.DatePickerRange(
-            id='date-picker',
-            min_date_allowed=date(1900, 1, 1),
-            max_date_allowed=date(9999, 1, 1),
-            initial_visible_month=date(2024, 5, 1),
-            # end_date=date(9999, 1, 1),
-            # start_date=date(1900, 1, 1)
-        ),
-    dbc.Button("Search", id="add-phrase-button", n_clicks=0),
-    html.H4(id="msg"),
-    html.H4(id="msg2"),
-
-    html.Div([
-        dcc.Dropdown(id="dropdown-options", multi=True, clearable=True),
-    ], style={'maxHeight': '140px', "height": "140px", "overflow-y": "scroll"}),
-    dbc.Button("Apply Filter", id="apply-button", n_clicks=0),
-    dcc.Graph(id="graph"),
+    html.H1("Turbo GPU App", style={"textAlign": "center", "marginTop": "30px", "marginBottom": "30px"}),
     dbc.Row([
-        #style={"width": "1400px"}
-        dbc.Col(html.Div(id="table"), width=8),
-        dbc.Col(dcc.Graph(id="ratings-pie-chart"), width=3)
-    ])
+        dbc.Card(
+            dbc.CardBody([
+                dbc.InputGroup([
+                        dbc.Input(id="phrase_input", value='', type="text"),
+                        dcc.DatePickerRange(
+                                id='date-picker',
+                                min_date_allowed=date(1900, 1, 1),
+                                max_date_allowed=date(9999, 1, 1),
+                                initial_visible_month=date(2024, 5, 1),
+                            ),
+                        dbc.Button("Search", id="add-phrase-button", n_clicks=0),
+                ]),
+                dbc.Spinner(html.H4(id="phrase"))
+
+            ]), style={"width": "95%"}
+        ),
+        ], align="center", justify="center"),
+    html.Br(),
+    dbc.Row([
+        dbc.Card(
+            dbc.CardBody([
+                html.Div([
+                    html.H5("Select something and apply"),
+                    dcc.Dropdown(id="dropdown-options", multi=True, clearable=True),
+                ], style={'maxHeight': '140px', "height": "120px", "overflow-y": "scroll"}),
+                dbc.Button("Apply Filter", id="apply-button", n_clicks=0, style={"marginTop": "10px"})
+            ]), style={"width": "95%"}
+        ),
+        dbc.Card(
+            dbc.CardBody([
+                dcc.Graph(id="graph")
+            ]), style={"width": "95%", "marginTop": "28px"}
+        ),
+        dbc.Card(
+            dbc.CardBody([
+                dbc.Row([
+                    #style={"width": "1400px"}
+                    dbc.Col(html.Div(id="table"), width=9),
+                    dbc.Col(
+                        dcc.Graph(id="ratings-pie-chart")
+                        , width=3
+                    )
+                ])
+            ]), style={"width": "95%", "marginTop": "28px"}
+        )
+        ], align="center", justify="center"),
+
 
 ])
-
-
-@app.callback(Output("msg", "children"),
-              [Input("add-phrase-button", "n_clicks")],
-              [State("phrase_input", "value")])
-def update_message(n_clicks, phrase_input):
-    if n_clicks > 0 and phrase_input.strip() != "":
-        return f"Phrase: {phrase_input}"
-    else:
-        return ""
 
 
 @app.callback([Output('dropdown-options', 'options'),
@@ -112,7 +140,7 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
 
             # Ratings #
             df_ratings = df_reviews.groupby("Rating").count()
-            print(df_ratings.head())
+
             traces = []
             plot_annotes = []
             # for xi, yi, label, url in zip(x, y, labels, urls):
@@ -174,7 +202,8 @@ def update_options(cache, n_clicks, n_clicks2, dataframe_products, reviews_dataf
 @app.callback(
     [Output("cache", "data"),
      Output("products-dataframe", "data"),
-     Output("reviews-dataframe", "data")
+     Output("reviews-dataframe", "data"),
+     Output("phrase", "children")
      ],
     [Input("add-phrase-button", "n_clicks"),
      Input('date-picker', 'start_date'),
@@ -194,8 +223,8 @@ def update_cache(n_clicks, start_date, end_date, phrase):
         options = ["Select All"]
         options.extend(df_products["ProductTitle"].unique().tolist())
 
-        return [options, df_products.to_dict(), df_reviews.to_dict()]
-    return None, None, None
+        return [options, df_products.to_dict(), df_reviews.to_dict(), f"Phrase: {phrase}"]
+    return None, None, None, "Provide phrase, 'rtx 3080' for example"
 
 
 if __name__ == '__main__':
