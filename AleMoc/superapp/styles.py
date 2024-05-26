@@ -1,7 +1,12 @@
 # table
 style_table = {
-    'height': '627px',
-    'overflowY': 'auto',
+    "height": "627px",
+    "overflowY": "auto",
+    "border": "1px solid #ced4da"
+}
+style_data = {
+    "backgroundColor": "lightblue",
+    "color": "black"
 }
 
 style_cell = {
@@ -11,7 +16,10 @@ style_cell = {
     }
 
 style_header = {
-    "textAlign": "left"
+    "textAlign": "left",
+    "backgroundColor": "#c5baaf",
+    "color": "black",
+    "fontWeight": "bold"
 }
 
 style_cell_conditional = [
@@ -48,7 +56,7 @@ style_data_conditional = [
             "filter_query": "{Rating} >= 4",
             "column_id": ["Rating"]
         },
-        "backgroundColor": "#386641"
+        "backgroundColor": "#16db65"
 
     },
     {
@@ -56,7 +64,7 @@ style_data_conditional = [
             "filter_query": "{Rating} <= 2",
             "column_id": ["Rating"]
         },
-        "backgroundColor": "#ae2012"
+        "backgroundColor": "#e63946"
 
     },
     {
