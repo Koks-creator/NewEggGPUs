@@ -74,6 +74,8 @@ class NewEggScraper:
         pagination_links = []
         links = defaultdict(dict)
         allowed_pages = list(range(1, max_pages+1))
+        if not pagination_links:
+            pagination_links.append(link)
 
         self.scraper_logger.info(f"[Execution id: {execution_id}] Getting pagination")
         for link in html.links:
@@ -86,6 +88,7 @@ class NewEggScraper:
                     self.scraper_logger.debug(f"[Execution id: {execution_id}] Link: {link}")
                     pagination_links.append(link)
 
+        self.scraper_logger.info(f"[Execution id: {execution_id}] pages found: {len(pagination_links)}")
         self.scraper_logger.info(f"[Execution id: {execution_id}] Getting products")
         for p_num, p_link in enumerate(pagination_links):
             self.scraper_logger.info(f"[Execution id: {execution_id}] Pages checked: {p_num+1}/{len(pagination_links)}")
