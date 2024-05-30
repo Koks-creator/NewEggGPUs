@@ -62,6 +62,6 @@ It's used for db operations, running scraper, managing sink folder. It works on 
 ![Screenshot_6](https://github.com/Koks-creator/NewEggGPUs/assets/73878161/b67a85a1-7470-469a-af09-8bc5d1d3e236)
 
 <h1>3.4 Web app</h1>
-<p>Web app made in dash, you've probably saw how it works and looks like cuz there is video at the top of this readme. It's used for visualizing data, that's it. Oh, and it works on port 8050 (I guess it's a default dash port).</p>
+<p>Web app made in dash (superapp/gpu_app.py), you've probably saw how it works and looks like cuz there is video at the top of this readme. It's used for visualizing data, that's it. Oh, and it works on port 8050 (I guess it's a default dash port).</p>
 
 
