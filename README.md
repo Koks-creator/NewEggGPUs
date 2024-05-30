@@ -55,6 +55,13 @@ When it comes to insert, I wanted it to be inserted only from scraped data (so n
 <h3><strong>Database is being created in setup.py file and it also includes creating admin user</strong></h3>
 
 <h1>3.3 API</h1>
+It's used for db operations, running scraper, managing sink folder. It works on port 8000. I'm too lazy to describe all of these endpoints and schemas, just see /docs endpoint and <a href="https://www.youtube.com/watch?v=CUoitT-Qhmg" target="_blank">read</a> goddam code.
 
+![Screenshot_5](https://github.com/Koks-creator/NewEggGPUs/assets/73878161/4f5a8524-9892-4ab4-8af3-e9813214a98f)
+
+![Screenshot_6](https://github.com/Koks-creator/NewEggGPUs/assets/73878161/b67a85a1-7470-469a-af09-8bc5d1d3e236)
+
+<h1>3.4 Web app</h1>
+<p>Web app made in dash, you've probably saw how it works and looks like cuz there is video at the top of this readme. It's used for visualizing data, that's it.</p>
 
 
