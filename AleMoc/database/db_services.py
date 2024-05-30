@@ -14,7 +14,7 @@ from AleMoc.database.models import Products, Reviews
 from AleMoc.config import Config
 from AleMoc.TurboLogger import CustomLogger
 
-database.create_database()
+#database.create_database()
 db_services_logger = CustomLogger(logger_name="DbServices", log_file_name=f"{Config.PROJECT_MAIN_PATH}/{Config.LOGS_FOLDER}/dbServicesLogs.txt",
                                   logger_log_level=logging.INFO).create_logger()
 
