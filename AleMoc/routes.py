@@ -1,25 +1,21 @@
-from typing import Annotated, List, Union, Optional
-import logging
+from typing import Annotated, List, Union
 from functools import wraps
 from random import randint
 import secrets
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-import uvicorn
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBasicCredentials
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import InvalidRequestError, OperationalError
 
-
 from AleMoc import app, security, sc
 from AleMoc import get_db, ADMIN_USER
-from AleMoc.database import models, db_services
+from AleMoc.database import db_services
 from AleMoc import schemas
-from AleMoc.scraper import scraper
 
 
-def requires_authentication(func):  # func refers to 'decorated' function, so in this case to route function
+def requires_authentication(func):
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         credentials = kwargs.get("credentials")
         if not authentication_check(credentials):
             raise HTTPException(
@@ -27,7 +23,7 @@ def requires_authentication(func):  # func refers to 'decorated' function, so in
                 detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Basic"},
             )
-        return func(*args, **kwargs)
+        return await func(*args, **kwargs)
     return wrapper
 
 
@@ -45,19 +41,19 @@ def authentication_check(credentials: HTTPBasicCredentials) -> bool:
 
 @app.get("/status")
 @app.get("/")
-def api_status():
+async def api_status():
     return "Hello, i'm alive"
 
 
 @app.get("/tableSchemas")
-def table_schemas():
+async def table_schemas():
     return db_services.get_table_schemas()
 
 
 @app.post("/queryTable/", response_model=List[Union[schemas.ProductSchema, schemas.ReviewSchema]])
-def query_table(query: schemas.QueryTable,
-                db: Session = Depends(get_db),
-                ):
+async def query_table(query: schemas.QueryTable,
+                      db: Session = Depends(get_db),
+                      ):
     try:
         res = db_services.query_table(db=db, table_name=query.table_name, query_filter=query.query_filter)
         return res
@@ -69,9 +65,9 @@ def query_table(query: schemas.QueryTable,
 
 
 @app.post("/queryTableSql/", response_model=schemas.QueryTableSqlResp)
-def query_table_sql(query: schemas.QueryTableSql,
-                    db: Session = Depends(get_db),
-                    ):
+async def query_table_sql(query: schemas.QueryTableSql,
+                          db: Session = Depends(get_db),
+                          ):
 
     try:
         res = db_services.query_table_sql(db=db, table_name=query.table_name, query_filter=query.query_filter)
@@ -91,9 +87,9 @@ def query_table_sql(query: schemas.QueryTableSql,
 # Needs Auth
 @app.put("/updateTable", response_model=List[Union[schemas.ProductSchema, schemas.ReviewSchema]])
 @requires_authentication
-def update_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                 update_query: schemas.UpdateTable,
-                 db: Session = Depends(get_db)):
+async def update_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                       update_query: schemas.UpdateTable,
+                       db: Session = Depends(get_db)):
     try:
         res = db_services.update_table(db=db, table_name=update_query.table_name,
                                        query_filter=update_query.query_filter,
@@ -108,9 +104,9 @@ def update_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)]
 
 @app.put("/updateTableSql")
 @requires_authentication
-def update_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                     update_query: schemas.UpdateTableSql,
-                     db: Session = Depends(get_db)):
+async def update_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                           update_query: schemas.UpdateTableSql,
+                           db: Session = Depends(get_db)):
 
     try:
         res = db_services.update_table_sql(db=db, table_name=update_query.table_name,
@@ -126,9 +122,9 @@ def update_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(securi
 
 @app.delete("/deleteFromTable")
 @requires_authentication
-def delete_from_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                      delete_query: schemas.DeleteFromTable,
-                      db: Session = Depends(get_db)):
+async def delete_from_table(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                            delete_query: schemas.DeleteFromTable,
+                            db: Session = Depends(get_db)):
     try:
         res = db_services.delete_from_table(db=db, table_name=delete_query.table_name,
                                             query_filter=delete_query.query_filter,
@@ -142,9 +138,9 @@ def delete_from_table(credentials: Annotated[HTTPBasicCredentials, Depends(secur
 
 @app.delete("/deleteFromTableSql")
 @requires_authentication
-def delete_from_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                          delete_query: schemas.DeleteFromTableSql,
-                          db: Session = Depends(get_db)):
+async def delete_from_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                                delete_query: schemas.DeleteFromTableSql,
+                                db: Session = Depends(get_db)):
     try:
         res = db_services.delete_from_table_sql(db=db, table_name=delete_query.table_name,
                                                 query_filter=delete_query.query_filter,
@@ -159,15 +155,15 @@ def delete_from_table_sql(credentials: Annotated[HTTPBasicCredentials, Depends(s
 
 @app.post("/runScraper")
 @requires_authentication
-def run_scraper(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                scraper_config: schemas.ScraperSchema,
-                db: Session = Depends(get_db)):
+async def run_scraper(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                      scraper_config: schemas.ScraperSchema,
+                      db: Session = Depends(get_db)):
 
     execution_id = f"{randint(1, 1000000):06d}"
     try:
-        prods, reviews, folder = sc.start_scraping(phrase=scraper_config.phrase.strip().replace(" ", "+"),
-                                                   max_pages=scraper_config.limit,
-                                                   execution_id=execution_id)
+        prods, reviews, folder = await sc.start_scraping(phrase=scraper_config.phrase.strip().replace(" ", "+"),
+                                                         max_pages=scraper_config.limit,
+                                                         execution_id=execution_id)
         folder = folder.split("/")[-1]
         if scraper_config.add_to_db:
             db_services.add_data_from_sink(db=db, folders_to_process=[folder])
@@ -183,14 +179,14 @@ def run_scraper(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
 
 @app.get("/listSink")
 @requires_authentication
-def list_sink(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
+async def list_sink(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
     return {"SinkFiles": db_services.list_sink()}
 
 
 @app.post("/processSink", status_code=201)
 @requires_authentication
-def process_sink(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-                 sink_process: schemas.SinkProcessSchema, db: Session = Depends(get_db)):
+async def process_sink(credentials: Annotated[HTTPBasicCredentials, Depends(security)],
+                       sink_process: schemas.SinkProcessSchema, db: Session = Depends(get_db)):
 
     sink_folders = db_services.list_sink()
     non_exist = [f for f in sink_process.folder_names if f not in sink_folders]
