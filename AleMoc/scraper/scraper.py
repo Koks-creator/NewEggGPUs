@@ -191,7 +191,7 @@ class NewEggScraper:
 
         return await asyncio.gather(*tasks)
 
-    def run(self, links: dict, execution_id: str) -> Tuple[List, List]:
+    async def run(self, links: dict, execution_id: str) -> Tuple[List, List]:
         products = []
         reviews = []
         reviews_count = 0
@@ -199,7 +199,7 @@ class NewEggScraper:
         self.scraper_logger.info(f"[Execution id: {execution_id}] Starting")
         start = perf_counter()
 
-        res = asyncio.run(self.init_tasks(links, execution_id))
+        res = await self.init_tasks(links, execution_id)
         for r in res:
             products.extend(r[0])
             reviews.extend(r[1])
@@ -224,10 +224,10 @@ class NewEggScraper:
         with open(filename, "w") as json_f:
             json.dump(data, json_f, indent=4)
 
-    def start_scraping(self, phrase: str, max_pages: int = 0, execution_id: str = "0", save: bool = True) -> Tuple[List[dict], List[dict], str]:
+    async def start_scraping(self, phrase: str, max_pages: int = 0, execution_id: str = "0", save: bool = True) -> Tuple[List[dict], List[dict], str]:
         links = self.get_urls(max_pages=max_pages, phrase=phrase, execution_id=execution_id)
         # print(links)
-        prods, reviews = self.run(links, execution_id)
+        prods, reviews = await self.run(links, execution_id)
 
         full_folder = ""
         if save:
@@ -243,4 +243,5 @@ class NewEggScraper:
 
 if __name__ == '__main__':
     sc = NewEggScraper(log_level=logging.INFO)
-    sc.start_scraping(phrase="rtx+3060", max_pages=0)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(sc.start_scraping(phrase="rtx+3060", max_pages=0))
