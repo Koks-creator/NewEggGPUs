@@ -1,5 +1,5 @@
 
-yeah, I will add async endpoints, I swear
+yeah, I will add async endpoints, I swear (and I did)
 <h1>1. Description</h1>
 This project is about scraping GPU from <a href="https://www.newegg.com/" target="_blank">new egg</a>, adding data to database, do operations on the data using api, running scraper with it as well and in the end deisplaying the data in dash web app.
 
